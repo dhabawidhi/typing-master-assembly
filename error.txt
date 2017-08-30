@@ -1,0 +1,5 @@
+
+(Error) Too many arguments
+try this	./main
+or		./main int_time(s)
+

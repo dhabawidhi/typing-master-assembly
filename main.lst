@@ -1,0 +1,935 @@
+     1                                 %line 3+1 print_info.asm
+     2                                 
+     3                                 %line 8+1 print_info.asm
+     4                                 
+     5                                 %line 11+1 print_info.asm
+     6                                 
+     7                                 
+     8                                 
+     9                                 
+    10                                 print:
+    11                                 
+    12                                 
+    13 00000000 89C3                    mov ebx, eax
+    14 00000002 B805000000              mov eax, 5
+    15 00000007 B900000000              mov ecx, 0
+    16 0000000C BA09030000              mov edx, 0777
+    17 00000011 CD80                    int 0x80
+    18 00000013 A3[00000000]            mov [fd_in], eax
+    19                                 
+    20                                 
+    21 00000018 B803000000              mov eax, 3
+    22 0000001D 8B1D[00000000]          mov ebx, [fd_in]
+    23 00000023 B9[00000000]            mov ecx, info
+    24 00000028 BA96000000              mov edx, len_info
+    25 0000002D CD80                    int 0x80
+    26                                 
+    27                                 
+    28 0000002F B806000000              mov eax, 6
+    29 00000034 8B1D[00000000]          mov ebx, [fd_in]
+    30 0000003A CD80                    int 0x80
+    31                                 
+    32                                 
+    33 0000003C B804000000              mov eax, 4
+    34 00000041 BB01000000              mov ebx, 1
+    35 00000046 B9[00000000]            mov ecx, info
+    36 0000004B BA96000000              mov edx, len_info
+    37 00000050 CD80                    int 0x80
+    38                                 
+    39 00000052 31DB                    xor ebx, ebx
+    40 00000054 B996000000              mov ecx, len_info
+    41                                 
+    42                                 null_info:
+    43 00000059 C683[00000000]00        mov byte [info + ebx], 0
+    44 00000060 43                      inc ebx
+    45 00000061 E0F4                    loopnz null_info
+    46                                 
+    47 00000063 31C0                    xor eax, eax
+    48 00000065 31DB                    xor ebx, ebx
+    49 00000067 31C9                    xor ecx, ecx
+    50 00000069 31D2                    xor edx, edx
+    51                                 
+    52 0000006B C3                      ret
+    53                                 
+    54                                 %line 3+1 convert_str_int.asm
+    55                                 
+    56                                 
+    57                                 
+    58                                 
+    59                                 [section .data]
+    60 00000000 0A000000                basis dd 10
+    61                                 
+    62                                 convert_str_int:
+    63 00000004 B800000000              mov eax, 0
+    64 00000009 BB00000000              mov ebx, 0
+    65 0000000E BA00000000              mov edx, 0
+    66                                 
+    67                                 looping:
+    68 00000013 7222                    jb return
+    69 00000015 8B8B[00000000]          mov ecx, dword [argu + ebx]
+    70 0000001B 81E1FF000000            and ecx, 0xff
+    71 00000021 83F930                  cmp ecx, 48
+    72 00000024 7211                    jb return
+    73 00000026 83F93A                  cmp ecx, 58
+    74 00000029 770C                    ja return
+    75 0000002B 83E930                  sub ecx, 48
+    76 0000002E F725[00000000]          mul dword [basis]
+    77 00000034 01C8                    add eax, ecx
+    78 00000036 43                      inc ebx
+    79 00000037 EBD8                    jmp looping
+    80                                 
+    81                                 return:
+    82 00000039 C3                      ret
+    83                                 
+    84                                 %line 3+1 convert_int_str.asm
+    85                                 
+    86                                 %line 6+1 convert_int_str.asm
+    87                                 
+    88                                 
+    89                                 
+    90                                 
+    91                                 convert_int_str:
+    92 0000003A 31C9                    xor ecx, ecx
+    93 0000003C EBFE                    jmp null_eax
+    94                                 
+    95                                 null_eax:
+    96 0000003E 31D2                    xor edx, edx
+    97 00000040 F735[00000000]          div dword [decimal]
+    98 00000046 52                      push edx
+    99 00000047 41                      inc ecx
+   100 00000048 83F800                  cmp eax, 0
+   101 0000004B 7400                    je continue
+   102 0000004D EBED                    jmp null_eax
+   103                                 
+   104                                 continue:
+   105 0000004F 31D2                    xor edx, edx
+   106                                 continue_1:
+   107 00000051 5B                      pop ebx
+   108 00000052 81E3FF000000            and ebx, 0xff
+   109 00000058 83C330                  add ebx, 48
+   110 0000005B 899A[00000000]          mov dword [temp_str + edx], ebx
+   111 00000061 42                      inc edx
+   112 00000062 E0EB                    loopnz continue_1
+   113                                 
+   114 00000064 B804000000              mov eax, 4
+   115 00000069 BB01000000              mov ebx, 1
+   116 0000006E B9[00000000]            mov ecx, temp_str
+   117 00000073 CD80                    int 0x80
+   118                                 
+   119 00000075 C3                      ret
+   120                                 
+   121                                 %line 3+1 set_alarm.asm
+   122                                 
+   123                                 %line 5+1 set_alarm.asm
+   124                                 
+   125                                 alarm:
+   126 00000076 B81B000000              mov eax, 27
+   127 0000007B 8B1D[00000000]          mov ebx, [time]
+   128 00000081 CD80                    int 0x80
+   129 00000083 C3                      ret
+   130                                 
+   131                                 %line 3+1 bogo_random.asm
+   132                                 
+   133                                 %line 6+1 bogo_random.asm
+   134                                 
+   135                                 %line 11+1 bogo_random.asm
+   136                                 
+   137                                 %line 14+1 bogo_random.asm
+   138                                 
+   139                                 %line 16+1 bogo_random.asm
+   140                                 
+   141                                 random:
+   142 00000084 B80D000000              mov eax, 13
+   143 00000089 BB00000000              mov ebx, 0
+   144 0000008E CD80                    int 0x80
+   145                                 
+   146 00000090 31D2                    xor edx, edx
+   147 00000092 B909000000              mov ecx, 9
+   148 00000097 F7F1                    div ecx
+   149                                 
+   150 00000099 49                      dec ecx
+   151 0000009A 39CA                    cmp edx, ecx
+   152 0000009C 745E                    je _9
+   153 0000009E 49                      dec ecx
+   154 0000009F 39CA                    cmp edx, ecx
+   155 000000A1 7452                    je _8
+   156 000000A3 49                      dec ecx
+   157 000000A4 39CA                    cmp edx, ecx
+   158 000000A6 7446                    je _7
+   159 000000A8 49                      dec ecx
+   160 000000A9 39CA                    cmp edx, ecx
+   161 000000AB 743A                    je _6
+   162 000000AD 49                      dec ecx
+   163 000000AE 39CA                    cmp edx, ecx
+   164 000000B0 742E                    je _5
+   165 000000B2 49                      dec ecx
+   166 000000B3 39CA                    cmp edx, ecx
+   167 000000B5 7422                    je _4
+   168 000000B7 49                      dec ecx
+   169 000000B8 39CA                    cmp edx, ecx
+   170 000000BA 7416                    je _3
+   171 000000BC 49                      dec ecx
+   172 000000BD 39CA                    cmp edx, ecx
+   173 000000BF 740A                    je _2
+   174 000000C1 49                      dec ecx
+   175 000000C2 39CA                    cmp edx, ecx
+   176 000000C4 74FE                    je _1
+   177                                 
+   178                                 _1:
+   179 000000C6 BE[00000000]            mov esi, p1
+   180 000000CB EB36                    jmp next
+   181                                 _2:
+   182 000000CD BE[00000000]            mov esi, p2
+   183 000000D2 EB2F                    jmp next
+   184                                 _3:
+   185 000000D4 BE[00000000]            mov esi, p3
+   186 000000D9 EB28                    jmp next
+   187                                 _4:
+   188 000000DB BE[00000000]            mov esi, p4
+   189 000000E0 EB21                    jmp next
+   190                                 _5:
+   191 000000E2 BE[00000000]            mov esi, p5
+   192 000000E7 EB1A                    jmp next
+   193                                 _6:
+   194 000000E9 BE[00000000]            mov esi, p6
+   195 000000EE EB13                    jmp next
+   196                                 _7:
+   197 000000F0 BE[00000000]            mov esi, p7
+   198 000000F5 EB0C                    jmp next
+   199                                 _8:
+   200 000000F7 BE[00000000]            mov esi, p8
+   201 000000FC EB05                    jmp next
+   202                                 _9:
+   203 000000FE BE[00000000]            mov esi, p9
+   204 00000103 EBFE                    jmp next
+   205                                 
+   206                                 next:
+   207                                 
+   208 00000105 89F3                    mov ebx, esi
+   209 00000107 B805000000              mov eax, 5
+   210 0000010C B900000000              mov ecx, 0
+   211 00000111 BA09030000              mov edx, 0777
+   212 00000116 CD80                    int 0x80
+   213 00000118 A3[00000000]            mov [fd_in], eax
+   214                                 
+   215                                 
+   216 0000011D B803000000              mov eax, 3
+   217 00000122 8B1D[00000000]          mov ebx, [fd_in]
+   218 00000128 B9[00000000]            mov ecx, file_str
+   219 0000012D BAE8030000              mov edx, 1000
+   220 00000132 CD80                    int 0x80
+   221                                 
+   222                                 
+   223 00000134 B806000000              mov eax, 6
+   224 00000139 8B1D[00000000]          mov ebx, [fd_in]
+   225 0000013F CD80                    int 0x80
+   226                                 
+   227 00000141 C3                      ret
+   228                                 
+   229                                 %line 3+1 compare_str.asm
+   230                                 
+   231                                 %line 5+1 compare_str.asm
+   232                                 
+   233                                 compare:
+   234                                 
+   235 00000142 31C0                    xor eax, eax
+   236 00000144 31DB                    xor ebx, ebx
+   237 00000146 EBFE                    jmp get_len_1_word
+   238                                 
+   239                                 get_len_1_word:
+   240 00000148 A1[00000000]            mov eax, [index]
+   241 0000014D 80BC18[00000000]20      cmp byte [file_str + eax + ebx], ' '
+   242 00000155 7401                    je mov_str
+   243 00000157 43                      inc ebx
+   244 00000158 EBEC                    jmp get_len_1_word
+   245                                 
+   246                                 mov_str:
+   247 0000015A 89D8                    mov eax, ebx
+   248 0000015C 89D9                    mov ecx, ebx
+   249 0000015E BE[00000000]            mov esi, file_str
+   250 00000163 0335[00000000]          add esi, [index]
+   251 00000169 031D[00000000]          add ebx, [index]
+   252 0000016F 891D[00000000]          mov dword [index], ebx
+   253 00000175 BF[00000000]            mov edi, temp_file
+   254                                 
+   255 0000017A F3A4                    rep movsb
+   256                                 
+   257 0000017C 8B1D[00000000]          mov ebx, [index]
+   258 00000182 43                      inc ebx
+   259 00000183 891D[00000000]          mov dword [index], ebx
+   260                                 
+   261                                 
+   262                                 
+   263                                 
+   264 00000189 B900000000              mov ecx, 0
+   265                                 
+   266                                 get_len_type:
+   267 0000018E 80B9[00000000]0A        cmp byte [temp_type + ecx], 10
+   268 00000195 7401                    je remove
+   269 00000197 41                      inc ecx
+   270 00000198 EBF2                    jmp get_len_type
+   271                                 
+   272                                 remove:
+   273 0000019A C681[00000000]00        mov byte [temp_type + ecx], 0
+   274                                 
+   275                                 
+   276 000001A1 39C8                    cmp eax, ecx
+   277 000001A3 7400                    je start_comparing
+   278 000001A5 EB4C                    jmp not_equal
+   279                                 
+   280                                 start_comparing:
+   281 000001A7 BE[00000000]            mov esi, temp_file
+   282 000001AC BF[00000000]            mov edi, temp_type
+   283 000001B1 F3A6                    rep cmpsb
+   284                                 
+   285 000001B3 E300                    jecxz equal
+   286 000001B5 EB3C                    jmp not_equal
+   287                                 
+   288                                 equal:
+   289 000001B7 31DB                    xor ebx, ebx
+   290 000001B9 B914000000              mov ecx, 20
+   291                                 
+   292                                 null_equal:
+   293 000001BE C683[00000000]00        mov byte [temp_file + ebx], 0
+   294 000001C5 43                      inc ebx
+   295 000001C6 E0F4                    loopnz null_equal
+   296                                 
+   297                                 
+   298 000001C8 89C3                    mov ebx, eax
+   299 000001CA 0305[00000000]          add eax, [wpm]
+   300 000001D0 40                      inc eax
+   301 000001D1 A3[00000000]            mov dword [wpm], eax
+   302 000001D6 031D[00000000]          add ebx, [one_word]
+   303 000001DC 43                      inc ebx
+   304 000001DD 891D[00000000]          mov dword [one_word], ebx
+   305 000001E3 C705[00000000]0100-     mov dword [b_or_s], 1
+   306 000001E3 0000               
+   307 000001ED 8305[00000000]01        add dword [correct_words], 1
+   308 000001F4 C3                      ret
+   309                                 
+   310                                 not_equal:
+   311 000001F5 31DB                    xor ebx, ebx
+   312 000001F7 B914000000              mov ecx, 20
+   313                                 
+   314                                 null_not_equal:
+   315 000001FC C683[00000000]00        mov byte [temp_file + ebx], 0
+   316 00000203 43                      inc ebx
+   317 00000204 E0F4                    loopnz null_not_equal
+   318                                 
+   319 00000206 0305[00000000]          add eax, [one_word]
+   320 0000020C 40                      inc eax
+   321 0000020D A3[00000000]            mov dword [one_word], eax
+   322                                 
+   323 00000212 B800000000              mov eax, 0
+   324 00000217 C705[00000000]0000-     mov dword [b_or_s], 0
+   325 00000217 0000               
+   326 00000221 8305[00000000]01        add dword [wrong_words], 1
+   327 00000228 C3                      ret
+   328                                 
+   329                                 %line 3+1 display_story.asm
+   330                                 
+   331                                 %line 7+1 display_story.asm
+   332                                 
+   333                                 display:
+   334 00000229 E88D010000              call get_1_word_backward_set
+   335 0000022E A1[00000000]            mov eax, [one_word]
+   336 00000233 8B1D[00000000]          mov ebx, [sementara]
+   337 00000239 39D8                    cmp eax, ebx
+   338 0000023B 7303                    jae first_display
+   339 0000023D E9AA000000              jmp edit_cursor
+   340                                 
+   341                                 first_display:
+   342                                 
+   343 00000242 B804000000              mov eax, 4
+   344 00000247 BB01000000              mov ebx, 1
+   345 0000024C B9[00000000]            mov ecx, display_cursor
+   346 00000251 BA1C000000              mov edx, len_display_cursor
+   347 00000256 CD80                    int 0x80
+   348                                 
+   349 00000258 BA51000000              mov edx, 81
+   350 0000025D A1[00000000]            mov eax, [sementara]
+   351 00000262 50                      push eax
+   352 00000263 A3[00000000]            mov dword [sementara2], eax
+   353                                 
+   354                                 l_first_display:
+   355 00000268 4A                      dec edx
+   356 00000269 80BC10[00000000]20      cmp byte [file_str + eax + edx], ' '
+   357 00000271 75F3                    jne l_first_display
+   358                                 
+   359 00000273 89D3                    mov ebx, edx
+   360 00000275 031D[00000000]          add ebx, [sementara]
+   361 0000027B 891D[00000000]          mov dword [sementara], ebx
+   362                                 
+   363 00000281 B804000000              mov eax, 4
+   364 00000286 B9[00000000]            mov ecx, file_str
+   365 0000028B 5B                      pop ebx
+   366 0000028C 83FB00                  cmp ebx, 0
+   367 0000028F 74FF                    je nope
+   368                                 inc_ebx:
+   369 00000291 43                      inc ebx
+   370                                 nope:
+   371 00000292 01D9                    add ecx, ebx
+   372 00000294 BB01000000              mov ebx, 1
+   373 00000299 CD80                    int 0x80
+   374                                 
+   375 0000029B B804000000              mov eax, 4
+   376 000002A0 BB01000000              mov ebx, 1
+   377 000002A5 B9[00000000]            mov ecx, cr
+   378 000002AA BA01000000              mov edx, len_cr
+   379 000002AF CD80                    int 0x80
+   380                                 
+   381                                 second_display:
+   382 000002B1 BA51000000              mov edx, 81
+   383 000002B6 8B1D[00000000]          mov ebx, [sementara]
+   384 000002BC 43                      inc ebx
+   385                                 l_second_display:
+   386 000002BD 4A                      dec edx
+   387 000002BE 80BC13[00000000]20      cmp byte [file_str + ebx + edx], ' '
+   388 000002C6 75F3                    jne l_second_display
+   389                                 
+   390 000002C8 B804000000              mov eax, 4
+   391 000002CD B9[00000000]            mov ecx, file_str
+   392 000002D2 01D9                    add ecx, ebx
+   393 000002D4 BB01000000              mov ebx, 1
+   394 000002D9 CD80                    int 0x80
+   395                                 
+   396                                 
+   397 000002DB B804000000              mov eax, 4
+   398 000002E0 BB01000000              mov ebx, 1
+   399 000002E5 B9[00000000]            mov ecx, msg_type
+   400 000002EA BA0D000000              mov edx, len_msg_type
+   401 000002EF CD80                    int 0x80
+   402                                 
+   403                                 edit_cursor:
+   404                                 
+   405 000002F1 A1[00000000]            mov eax, [one_word]
+   406 000002F6 8B1D[00000000]          mov ebx, [sementara2]
+   407 000002FC 83FB00                  cmp ebx, 0
+   408 000002FF 74FF                    je nope2
+   409 00000301 43                      inc ebx
+   410                                 nope2:
+   411 00000302 29D8                    sub eax, ebx
+   412 00000304 83C001                  add eax, 1
+   413 00000307 31C9                    xor ecx, ecx
+   414 00000309 EBFE                    jmp null_
+   415                                 
+   416                                 null_:
+   417 0000030B 31D2                    xor edx, edx
+   418 0000030D F735[00000000]          div dword [decimal]
+   419 00000313 52                      push edx
+   420 00000314 41                      inc ecx
+   421 00000315 83F800                  cmp eax, 0
+   422 00000318 7400                    je lanjut
+   423 0000031A EBED                    jmp null_
+   424                                 lanjut:
+   425 0000031C 31D2                    xor edx, edx
+   426                                 lanjut_1:
+   427 0000031E 5B                      pop ebx
+   428 0000031F 80C330                  add bl, 48
+   429 00000322 889A[04000000]          mov byte [move_cursor1 + 4 + edx], bl
+   430 00000328 42                      inc edx
+   431 00000329 E0F1                    loopnz lanjut_1
+   432 0000032B C682[04000000]48        mov byte [move_cursor1 + 4 + edx], 'H'
+   433 00000332 42                      inc edx
+   434 00000333 C682[04000000]00        mov byte [move_cursor1 + 4 + edx], 0
+   435 0000033A 83C204                  add edx, 4
+   436                                 
+   437                                 
+   438 0000033D B804000000              mov eax, 4
+   439 00000342 BB01000000              mov ebx, 1
+   440 00000347 B9[00000000]            mov ecx, move_cursor1
+   441 0000034C CD80                    int 0x80
+   442                                 
+   443 0000034E B804000000              mov eax, 4
+   444 00000353 BB01000000              mov ebx, 1
+   445 00000358 B9[00000000]            mov ecx, save_cursor
+   446 0000035D BA04000000              mov edx, len_save_cursor
+   447 00000362 CD80                    int 0x80
+   448                                 
+   449 00000364 B804000000              mov eax, 4
+   450 00000369 BB01000000              mov ebx, 1
+   451 0000036E B9[00000000]            mov ecx, magenta_bg
+   452 00000373 BA06000000              mov edx, len_magenta_bg
+   453 00000378 CD80                    int 0x80
+   454                                 
+   455 0000037A 55                      push ebp
+   456 0000037B 8B2D[00000000]          mov ebp, [one_word]
+   457 00000381 B804000000              mov eax, 4
+   458 00000386 BB01000000              mov ebx, 1
+   459 0000038B BAFFFFFFFF              mov edx, -1
+   460                                 get_1_word_forward:
+   461 00000390 42                      inc edx
+   462 00000391 80BC15[00000000]20      cmp byte [file_str + ebp + edx], ' '
+   463 00000399 75F3                    jne get_1_word_forward
+   464 0000039B B9[00000000]            mov ecx, file_str
+   465 000003A0 01E9                    add ecx, ebp
+   466 000003A2 5D                      pop ebp
+   467 000003A3 CD80                    int 0x80
+   468                                 
+   469 000003A5 B804000000              mov eax, 4
+   470 000003AA BB01000000              mov ebx, 1
+   471 000003AF B9[00000000]            mov ecx, default_bg
+   472 000003B4 BA06000000              mov edx, len_default_bg
+   473 000003B9 CD80                    int 0x80
+   474 000003BB E9A2000000              jmp kembali
+   475                                 
+   476                                 
+   477                                 get_1_word_backward_set:
+   478 000003C0 833D[00000000]00        cmp dword [one_word], 0
+   479 000003C7 0F8493000000            je ret_edit_cursor
+   480                                 
+   481 000003CD B804000000              mov eax, 4
+   482 000003D2 BB01000000              mov ebx, 1
+   483 000003D7 B9[00000000]            mov ecx, restore_cursor
+   484 000003DC BA04000000              mov edx, len_restore_cursor
+   485 000003E1 CD80                    int 0x80
+   486 000003E3 833D[00000000]00        cmp dword [b_or_s], 0
+   487 000003EA 7416                    je red_color
+   488                                 green_color:
+   489                                 
+   490 000003EC B804000000              mov eax, 4
+   491 000003F1 BB01000000              mov ebx, 1
+   492 000003F6 B9[00000000]            mov ecx, fr_green
+   493 000003FB BA06000000              mov edx, len_fr_green
+   494 00000400 CD80                    int 0x80
+   495 00000402 EB16                    jmp eksekusi
+   496                                 red_color:
+   497                                 
+   498 00000404 B804000000              mov eax, 4
+   499 00000409 BB01000000              mov ebx, 1
+   500 0000040E B9[00000000]            mov ecx, fr_red
+   501 00000413 BA06000000              mov edx, len_fr_red
+   502 00000418 CD80                    int 0x80
+   503 0000041A EBFE                    jmp eksekusi
+   504                                 eksekusi:
+   505                                 
+   506 0000041C 55                      push ebp
+   507 0000041D 8B2D[00000000]          mov ebp, [one_word]
+   508 00000423 83ED01                  sub ebp, 1
+   509 00000426 B804000000              mov eax, 4
+   510 0000042B BB01000000              mov ebx, 1
+   511 00000430 BAFFFFFFFF              mov edx, -1
+   512                                 get_1_word_backward:
+   513 00000435 42                      inc edx
+   514 00000436 83FD00                  cmp ebp, 0
+   515 00000439 7409                    je first_sentences
+   516 0000043B 4D                      dec ebp
+   517 0000043C 80BD[00000000]20        cmp byte [file_str + ebp], ' '
+   518 00000443 75EE                    jne get_1_word_backward
+   519                                 add_ebp:
+   520 00000445 45                      inc ebp
+   521                                 first_sentences:
+   522 00000446 B9[00000000]            mov ecx, file_str
+   523 0000044B 01E9                    add ecx, ebp
+   524 0000044D CD80                    int 0x80
+   525 0000044F 5D                      pop ebp
+   526                                 
+   527 00000450 B804000000              mov eax, 4
+   528 00000455 BB01000000              mov ebx, 1
+   529 0000045A B9[00000000]            mov ecx, fr_default
+   530 0000045F BA06000000              mov edx, len_fr_default
+   531 00000464 CD80                    int 0x80
+   532                                 ret_edit_cursor:
+   533 00000466 C3                      ret
+   534                                 
+   535                                 kembali:
+   536                                 
+   537 00000467 B804000000              mov eax, 4
+   538 0000046C BB01000000              mov ebx, 1
+   539 00000471 B9[00000000]            mov ecx, cursor_type
+   540 00000476 BA09000000              mov edx, len_cursor_type
+   541 0000047B CD80                    int 0x80
+   542                                 
+   543 0000047D C3                      ret
+   544                                 
+   545                                 %line 3+1 measure_wpm.asm
+   546                                 
+   547                                 wpm_measure:
+   548 0000047E 31D2                    xor edx, edx
+   549 00000480 A1[00000000]            mov eax, [time]
+   550 00000485 F735[00000000]          div dword [basis_wpm]
+   551 0000048B 83FA00                  cmp edx, 0
+   552 0000048E 744E                    je without_dec
+   553 00000490 83F800                  cmp eax, 0
+   554 00000493 742A                    je just_dec
+   555                                 
+   556 00000495 52                      push edx
+   557 00000496 31D2                    xor edx, edx
+   558 00000498 89C3                    mov ebx, eax
+   559 0000049A A1[00000000]            mov eax, [wpm]
+   560 0000049F F7F3                    div ebx
+   561 000004A1 5B                      pop ebx
+   562 000004A2 50                      push eax
+   563 000004A3 89D8                    mov eax, ebx
+   564 000004A5 F725[00000000]          mul dword [decimal]
+   565 000004AB 31D2                    xor edx, edx
+   566 000004AD F735[00000000]          div dword [basis_wpm]
+   567 000004B3 89C3                    mov ebx, eax
+   568 000004B5 58                      pop eax
+   569 000004B6 50                      push eax
+   570 000004B7 31D2                    xor edx, edx
+   571 000004B9 F7F3                    div ebx
+   572 000004BB 89C3                    mov ebx, eax
+   573 000004BD 58                      pop eax
+   574 000004BE 29D8                    sub eax, ebx
+   575 000004C0 C3                      ret
+   576                                 just_dec:
+   577 000004C1 89D0                    mov eax, edx
+   578 000004C3 F725[00000000]          mul dword [decimal]
+   579 000004C9 31D2                    xor edx, edx
+   580 000004CB F735[00000000]          div dword [basis_wpm]
+   581 000004D1 F725[00000000]          mul dword [wpm]
+   582 000004D7 31D2                    xor edx, edx
+   583 000004D9 F735[00000000]          div dword [decimal]
+   584 000004DF C3                      ret
+   585                                 
+   586                                 without_dec:
+   587 000004E0 83F800                  cmp eax, 0
+   588 000004E3 7408                    je eax0
+   589 000004E5 89C3                    mov ebx, eax
+   590 000004E7 A1[00000000]            mov eax, [wpm]
+   591 000004EC F7F3                    div ebx
+   592 000004EE C3                      ret
+   593                                 
+   594                                 eax0:
+   595 000004EF C3                      ret
+   596                                 
+   597                                 %line 3+1 clear_screen.asm
+   598                                 
+   599                                 %line 6+1 clear_screen.asm
+   600                                 
+   601                                 
+   602                                 
+   603                                 
+   604                                 
+   605                                 
+   606                                 [section .data]
+   607 000004F0 1B5B481B5B324A00        clr_scr db 27, '[H' , 27, '[2J', 0
+   608                                  len_clr_scr equ $-clr_scr
+   609                                 
+   610                                 clear_screen:
+   611 000004F8 B804000000              mov eax, 4
+   612 000004FD BB01000000              mov ebx, 1
+   613 00000502 B9[00000000]            mov ecx, clr_scr
+   614 00000507 BA08000000              mov edx, len_clr_scr
+   615 0000050C CD80                    int 0x80
+   616                                 
+   617 0000050E C3                      ret
+   618                                 
+   619                                 %line 10+1 main.asm
+   620                                 
+   621                                 %line 18+1 main.asm
+   622                                 
+   623                                 %line 22+1 main.asm
+   624                                 
+   625                                 %line 28+1 main.asm
+   626                                 
+   627                                 [section .data]
+   628 0000050F 77656C636F6D652E74-     msg_welcome db 'welcome.txt', 0
+   629 0000050F 787400             
+   630 0000051B 6572726F722E747874-     msg_error db 'error.txt', 0
+   631 0000051B 00                 
+   632                                  len_info equ 150
+   633 00000525 0A0A54797065206865-     msg_type db 10, 10, 'Type here:', 0
+   634 00000525 72653A00           
+   635                                  len_msg_type equ $-msg_type
+   636 00000532 576F72647320706572-     msg_wpm db 'Words per minute (WPM)	: ', 0
+   637 00000532 206D696E7574652028-
+   638 00000532 57504D29093A2000   
+   639                                  len_msg_wpm equ $-msg_wpm
+   640 0000054C 4B65797374726F6B65-     msg_keystrokes db 'Keystrokes 		: ', 0
+   641 0000054C 732009093A2000     
+   642                                  len_msg_keystrokes equ $-msg_keystrokes
+   643 0000055C 436F72726563742077-     msg_correct_words db 'Correct words 		: ', 0
+   644 0000055C 6F7264732009093A20-
+   645 0000055C 00                 
+   646                                  len_msg_correct_words equ $-msg_correct_words
+   647 0000056F 57726F6E6720776F72-     msg_wrong_words db 'Wrong words 		: ', 0
+   648 0000056F 64732009093A2000   
+   649                                  len_msg_wrong_words equ $-msg_wrong_words
+   650 00000580 0A000000                decimal dd 10
+   651 00000584 0C000000                basis_wpm dd 12
+   652 00000588 0A                      cr db 10
+   653                                  len_cr equ $-cr
+   654 00000589 202800                  leftresult db ' (', 0
+   655                                  len_leftresult equ $-leftresult
+   656 0000058C 7C00                    midresult db '|', 0
+   657                                  len_midresult equ $-midresult
+   658 0000058E 2900                    rightresult db ')', 0
+   659                                  len_rightresult equ $-rightresult
+   660                                 
+   661                                 
+   662 00000590 1B5B4B00                erase_line db 27, '[K', 0
+   663                                  len_erase_line equ $-erase_line
+   664 00000594 1B5B31313B31324800      cursor_type db 27, '[11;12H', 0
+   665                                  len_cursor_type equ $-cursor_type
+   666 0000059D 1B5B383B30304800        move_cursor1 db 27, '[8;00H', 0
+   667                                  len_move_cursor1 equ $-move_cursor1
+   668 000005A5 1B5B7300                save_cursor db 27, '[s', 0
+   669                                  len_save_cursor equ $-save_cursor
+   670 000005A9 1B5B7500                restore_cursor db 27, '[u', 0
+   671                                  len_restore_cursor equ $-restore_cursor
+   672 000005AD 1B5B34396D00            default_bg db 27, '[49m', 0
+   673                                  len_default_bg equ $-default_bg
+   674 000005B3 1B5B33396D00            fr_default db 27, '[39m', 0
+   675                                  len_fr_default equ $-fr_default
+   676 000005B9 1B5B34366D00            magenta_bg db 27, '[46m', 0
+   677                                  len_magenta_bg equ $-magenta_bg
+   678 000005BF 1B5B383B3030481B5B-     display_cursor db 27, '[8;00H', 27, '[K', 27, '[9;00H', 27, '[K', 27, '[8;00H', 0
+   679 000005BF 4B1B5B393B3030481B-
+   680 000005BF 5B4B1B5B383B303048-
+   681 000005BF 00                 
+   682                                  len_display_cursor equ $-display_cursor
+   683 000005DB 1B5B33326D00            fr_green db 27, '[32m', 0
+   684                                  len_fr_green equ $-fr_green
+   685 000005E1 1B5B33316D00            fr_red db 27, '[31m', 0
+   686                                  len_fr_red equ $-fr_red
+   687                                 
+   688                                 
+   689 000005E7 706172616772617068-     p1 db 'paragraph/p1.txt', 0
+   690 000005E7 2F70312E74787400   
+   691 000005F8 706172616772617068-     p2 db 'paragraph/p2.txt', 0
+   692 000005F8 2F70322E74787400   
+   693 00000609 706172616772617068-     p3 db 'paragraph/p3.txt', 0
+   694 00000609 2F70332E74787400   
+   695 0000061A 706172616772617068-     p4 db 'paragraph/p4.txt', 0
+   696 0000061A 2F70342E74787400   
+   697 0000062B 706172616772617068-     p5 db 'paragraph/p5.txt', 0
+   698 0000062B 2F70352E74787400   
+   699 0000063C 706172616772617068-     p6 db 'paragraph/p6.txt', 0
+   700 0000063C 2F70362E74787400   
+   701 0000064D 706172616772617068-     p7 db 'paragraph/p7.txt', 0
+   702 0000064D 2F70372E74787400   
+   703 0000065E 706172616772617068-     p8 db 'paragraph/p8.txt', 0
+   704 0000065E 2F70382E74787400   
+   705 0000066F 706172616772617068-     p9 db 'paragraph/p9.txt', 0
+   706 0000066F 2F70392E74787400   
+   707                                 
+   708                                 [section .bss]
+   709 00000000 <gap>                   fd_in resd 1
+   710 00000004 <gap>                   info resb len_info
+   711 0000009A <gap>                   argu resd 4
+   712 000000AA <gap>                   time resd 1
+   713 000000AE <gap>                   file_str resb 1000
+   714 00000496 <gap>                   temp_type resb 20
+   715 000004AA <gap>                   temp_file resb 20
+   716 000004BE <gap>                   index resd 1
+   717 000004C2 <gap>                   wpm resd 1
+   718 000004C6 <gap>                   display_story resb 80
+   719 00000516 <gap>                   one_word resd 1
+   720 0000051A <gap>                   temp_str resb 4
+   721 0000051E <gap>                   sementara resd 1
+   722 00000522 <gap>                   sementara2 resd 1
+   723 00000526 <gap>                   condition resd 1
+   724 0000052A <gap>                   b_or_s resd 1
+   725 0000052E <gap>                   correct_words resd 1
+   726 00000532 <gap>                   wrong_words resd 1
+   727                                 
+   728                                 [section .text]
+   729                                 [global main]
+   730                                 main:
+   731 0000006C 55                      push ebp
+   732 0000006D 89E5                    mov ebp, esp
+   733 0000006F 837D0401                cmp dword [ebp + 4], 1
+   734 00000073 741C                    je random_60s
+   735 00000075 837D0402                cmp dword [ebp + 4], 2
+   736 00000079 771D                    ja too_many_args
+   737 0000007B BB03000000              mov ebx, 3
+   738 00000080 EBFE                    jmp an_args
+   739                                 
+   740                                 
+   741                                 an_args:
+   742 00000082 8B749D00                mov esi, dword [ebp + 4 * ebx]
+   743 00000086 BF[00000000]            mov edi, argu
+   744 0000008B A5                      movsd
+   745                                 
+   746 0000008C E8(F6FFFFFF)            call convert_str_int
+   747 00000091 EB23                    jmp start
+   748                                 
+   749                                 
+   750                                 random_60s:
+   751 00000093 B83C000000              mov eax, 60
+   752 00000098 EB1C                    jmp start
+   753                                 
+   754                                 
+   755                                 too_many_args:
+   756 0000009A E8(F6FFFFFF)            call clear_screen
+   757                                 
+   758 0000009F B8[00000000]            mov eax, msg_welcome
+   759 000000A4 E852FFFFFF              call print
+   760                                 
+   761 000000A9 B8[00000000]            mov eax, msg_error
+   762 000000AE E848FFFFFF              call print
+   763 000000B3 E933020000              jmp exit
+   764                                 
+   765                                 start:
+   766 000000B8 A3[00000000]            mov dword [time], eax
+   767                                 
+   768 000000BD B830000000              mov eax, 48
+   769 000000C2 BB0E000000              mov ebx, 14
+   770 000000C7 B9[00000000]            mov ecx, count_wpm
+   771 000000CC CD80                    int 0x80
+   772                                 
+   773 000000CE E8(F6FFFFFF)            call alarm
+   774                                 
+   775 000000D3 E8(F6FFFFFF)            call random
+   776                                 
+   777 000000D8 E8(F6FFFFFF)            call clear_screen
+   778                                 
+   779 000000DD B8[00000000]            mov eax, msg_welcome
+   780 000000E2 E814FFFFFF              call print
+   781 000000E7 EBFE                    jmp user
+   782                                 
+   783                                 
+   784                                 user:
+   785 000000E9 E8(F6FFFFFF)            call display
+   786                                 
+   787                                 input:
+   788                                 
+   789 000000EE B804000000              mov eax, 4
+   790 000000F3 BB01000000              mov ebx, 1
+   791 000000F8 B9[00000000]            mov ecx, cursor_type
+   792 000000FD BA09000000              mov edx, len_cursor_type
+   793 00000102 CD80                    int 0x80
+   794                                 
+   795 00000104 B804000000              mov eax, 4
+   796 00000109 BB01000000              mov ebx, 1
+   797 0000010E B9[00000000]            mov ecx, erase_line
+   798 00000113 BA04000000              mov edx, len_erase_line
+   799 00000118 CD80                    int 0x80
+   800                                 
+   801 0000011A B803000000              mov eax, 3
+   802 0000011F BB00000000              mov ebx, 0
+   803 00000124 B9[00000000]            mov ecx, temp_type
+   804 00000129 BA14000000              mov edx, 20
+   805 0000012E CD80                    int 0x80
+   806 00000130 803D[00000000]0A        cmp byte [temp_type], 10
+   807 00000137 74B3                    je input
+   808 00000139 E8(F6FFFFFF)            call compare
+   809                                 
+   810 0000013E 31DB                    xor ebx, ebx
+   811 00000140 B914000000              mov ecx, 20
+   812                                 
+   813                                 null_temp_type:
+   814 00000145 C683[00000000]00        mov byte [temp_type + ebx], 0
+   815 0000014C 43                      inc ebx
+   816 0000014D E0F4                    loopnz null_temp_type
+   817 0000014F EB96                    jmp user
+   818                                 
+   819                                 count_wpm:
+   820 00000151 E8(F6FFFFFF)            call clear_screen
+   821                                 
+   822 00000156 B8[00000000]            mov eax, msg_welcome
+   823 0000015B E89BFEFFFF              call print
+   824                                 
+   825                                 
+   826 00000160 B804000000              mov eax, 4
+   827 00000165 BB00000000              mov ebx, 0
+   828 0000016A B9[00000000]            mov ecx, msg_wpm
+   829 0000016F BA1A000000              mov edx, len_msg_wpm
+   830 00000174 CD80                    int 0x80
+   831 00000176 E8(F6FFFFFF)            call wpm_measure
+   832 0000017B E8(F6FFFFFF)            call convert_int_str
+   833 00000180 E8C5000000              call cr_print
+   834                                 
+   835 00000185 B804000000              mov eax, 4
+   836 0000018A BB00000000              mov ebx, 0
+   837 0000018F B9[00000000]            mov ecx, msg_keystrokes
+   838 00000194 BA10000000              mov edx, len_msg_keystrokes
+   839 00000199 CD80                    int 0x80
+   840 0000019B A1[00000000]            mov eax, [one_word]
+   841 000001A0 E8(F6FFFFFF)            call convert_int_str
+   842 000001A5 E8FC000000              call _leftresult
+   843 000001AA E8C9000000              call green_result
+   844 000001AF A1[00000000]            mov eax, [wpm]
+   845 000001B4 E8(F6FFFFFF)            call convert_int_str
+   846 000001B9 E8D1000000              call default_result
+   847 000001BE E8FA000000              call _midresult
+   848 000001C3 E899000000              call red_result
+   849 000001C8 A1[00000000]            mov eax, [one_word]
+   850 000001CD 2B05[00000000]          sub eax, [wpm]
+   851 000001D3 E8(F6FFFFFF)            call convert_int_str
+   852 000001D8 E8B2000000              call default_result
+   853 000001DD E8F2000000              call _rightresult
+   854 000001E2 E863000000              call cr_print
+   855                                 
+   856 000001E7 B804000000              mov eax, 4
+   857 000001EC BB00000000              mov ebx, 0
+   858 000001F1 B9[00000000]            mov ecx, msg_correct_words
+   859 000001F6 BA13000000              mov edx, len_msg_correct_words
+   860 000001FB CD80                    int 0x80
+   861 000001FD E876000000              call green_result
+   862 00000202 A1[00000000]            mov eax, [correct_words]
+   863 00000207 E8(F6FFFFFF)            call convert_int_str
+   864 0000020C E87E000000              call default_result
+   865 00000211 E834000000              call cr_print
+   866                                 
+   867 00000216 B804000000              mov eax, 4
+   868 0000021B BB00000000              mov ebx, 0
+   869 00000220 B9[00000000]            mov ecx, msg_wrong_words
+   870 00000225 BA11000000              mov edx, len_msg_wrong_words
+   871 0000022A CD80                    int 0x80
+   872 0000022C E830000000              call red_result
+   873 00000231 A1[00000000]            mov eax, [wrong_words]
+   874 00000236 E8(F6FFFFFF)            call convert_int_str
+   875 0000023B E84F000000              call default_result
+   876 00000240 E805000000              call cr_print
+   877 00000245 E800000000              call cr_print
+   878                                 
+   879 0000024A E99C000000              jmp exit
+   880                                 
+   881                                 cr_print:
+   882 0000024F B804000000              mov eax, 4
+   883 00000254 BB01000000              mov ebx, 1
+   884 00000259 B9[00000000]            mov ecx, cr
+   885 0000025E BA01000000              mov edx, len_cr
+   886 00000263 CD80                    int 0x80
+   887 00000265 C3                      ret
+   888                                 red_result:
+   889 00000266 B804000000              mov eax, 4
+   890 0000026B BB01000000              mov ebx, 1
+   891 00000270 B9[00000000]            mov ecx, fr_red
+   892 00000275 BA06000000              mov edx, len_fr_red
+   893 0000027A CD80                    int 0x80
+   894 0000027C C3                      ret
+   895                                 green_result:
+   896 0000027D B804000000              mov eax, 4
+   897 00000282 BB01000000              mov ebx, 1
+   898 00000287 B9[00000000]            mov ecx, fr_green
+   899 0000028C BA06000000              mov edx, len_fr_green
+   900 00000291 CD80                    int 0x80
+   901 00000293 C3                      ret
+   902                                 default_result:
+   903 00000294 B804000000              mov eax, 4
+   904 00000299 BB01000000              mov ebx, 1
+   905 0000029E B9[00000000]            mov ecx, fr_default
+   906 000002A3 BA06000000              mov edx, len_fr_default
+   907 000002A8 CD80                    int 0x80
+   908 000002AA C3                      ret
+   909                                 
+   910                                 _leftresult:
+   911 000002AB B804000000              mov eax, 4
+   912 000002B0 BB01000000              mov ebx, 1
+   913 000002B5 B9[00000000]            mov ecx, leftresult
+   914 000002BA BA03000000              mov edx, len_leftresult
+   915 000002BF CD80                    int 0x80
+   916 000002C1 C3                      ret
+   917                                 _midresult:
+   918 000002C2 B804000000              mov eax, 4
+   919 000002C7 BB01000000              mov ebx, 1
+   920 000002CC B9[00000000]            mov ecx, midresult
+   921 000002D1 BA02000000              mov edx, len_midresult
+   922 000002D6 CD80                    int 0x80
+   923 000002D8 C3                      ret
+   924                                 _rightresult:
+   925 000002D9 B804000000              mov eax, 4
+   926 000002DE BB01000000              mov ebx, 1
+   927 000002E3 B9[00000000]            mov ecx, rightresult
+   928 000002E8 BA02000000              mov edx, len_rightresult
+   929 000002ED CD80                    int 0x80
+   930 000002EF C3                      ret
+   931                                 
+   932                                 exit:
+   933 000002F0 B801000000              mov eax, 1
+   934 000002F5 BB00000000              mov ebx, 0
+   935 000002FA CD80                    int 0x80

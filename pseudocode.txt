@@ -1,0 +1,664 @@
+define no_args 1
+define max_args 2
+define sys_read 3
+define sys_write 4
+define sys_open 5
+define sys_close 6
+define sys_signal 48
+
+define std_in 0
+define std_out 1
+define sig_alarm 14
+
+define digit 4
+define default_time 60
+define max_file_str 1000
+define max_char_str 20
+define max_terminal 80
+//global variable
+fd_in
+info
+argu
+time
+file_str
+tempt_type
+temp_file
+index
+wpm
+display_story
+one_word
+temp_str
+sementara
+sementara2
+condition
+b_or_s
+correct_words
+wrong_words
+stack<string> esi;
+void random_60s()
+{
+	eax=default_time;
+	start();
+}
+
+void start()
+{
+	dword[time]=eax; // for set time
+	eax=sys_signal=48; // setting alarm for sig_alarm handler
+	ebx=sig_alarm=14;
+	ecx=count_wpm();
+	
+	alarm(); //take count down
+	random(); // take random story
+	clear_screen(); // header
+	eax=msg_welcome;
+	print()
+}
+
+void user()
+{
+	display();
+}
+
+void display()
+{
+	get_1_word_backward_set();
+	mov eax,one word
+	mov ebx, sementara
+	if(eax>=ebx) first_display();
+}
+
+void first_display()
+{
+	eax=sys_write=4;
+	ebx=std_out=1;
+	ecx=display_cursor
+	edx=len_display_cursor;
+
+	edx=81 // for counter
+	eax=sementara
+	esi.push_back(eax);
+	mov dword[sementara], eax;
+}
+
+void l_first_display()
+{
+	edx=edx-1;
+	if(byte[file_str+eax+edx]!='') l_first_display();
+	ebx=edx;
+	ebx=ebx+sementara;
+	eax=sys_write;
+	ecx=file_str;
+	esi.pop_back(ebx);
+	if(ebx==0) nope();
+}
+
+void nope()
+{
+	ecx=ecx_ebx;
+	ebx=std_out=1;
+	eax=4;
+	ebx=1;
+	ecx=cr;
+	printf(ecx);
+	//edx=len_cr;
+}
+
+void cursor()
+{
+	eax=one_word
+	ebx=sementara2
+	if(ebx==0) nope2();
+	ebx=ebx+1;
+}
+
+void nope2()
+{
+	eax=eax-ebx
+	eax=eax+1
+	ecx=0;
+	null_();
+}
+
+void null_()
+{
+	edx=0;
+	eax=eax/dword [decimal];
+	esi.push_back(edx);
+	ecx=ecx+1
+	if(eax==0) lanjut();
+	else null_();
+
+
+}
+
+void lanjut()
+{
+	edx=0;
+	lanjut_1();
+}
+
+void lanjut_1()
+{
+	esi.pop_back(ebx);
+	bl=bl+48
+	byte[move+cursor1+4+edx]=bl
+	edx=edx+1
+	if(eax>0) lanjut_1();
+	byte[move_cursor1+4+edx]="H";
+	edx=edx+1;
+	byte[move_cursor1+4+edx]=0;
+	edx=edx+4;
+//move_cursor1
+	eax=sys_write
+	ebx=std_out
+	ecx=move_cursor1
+//save_cursor
+	eax=sys_write;
+	ebx=std_out;
+	ecx=save_cursor;
+	//edx=len_save_cursor;
+//magenta_bg
+	eax=sys_write=4;
+	ebx=std_out=1;
+	ecx=magenta_bg;
+	//edx=len_magenta_bg;
+	//print highligt text
+
+	esi.push_back(ebp)
+	ebp=one_word
+	eax=sys_write
+	ebx=std_out
+	edx=-1
+
+}
+
+void get_1_word_forward()
+{
+	edx=edx+1
+	if(byte[file_str+ebp+edx]!='')
+	get_1_word_forward()
+	ecx=file_str
+	ecx=ecx+ebp
+	esi.pop_back(ebp);
+
+	eax=sys_write=4;
+	ebx=std_out;
+	ecx=default_bg
+	edx=len_default_bg
+
+	kembali();
+
+}
+
+void kembali()
+{
+	mov eax=sys_write=4;
+	ebx=std_out=1;
+	ecx=cursor_type
+	edx=len_cursor_type
+}
+void get_1_word_backward_set()
+{
+	edx=edx+1;
+	if(byte[file_str+ebp+edx]!="") get_1_word_forward;
+	ecx=file_str;
+	ecx=ecx+ebp
+	esi.pop_back(ebp);
+
+	//default bg
+
+	eax=sys_write=4;
+	ebx=std_out=1;
+	ecx=restore_cursor;
+	edx=len_restore_cursor;
+	if(dword [b_or_s]==0) red_color();
+}
+
+void red_color()
+{
+	mov eax, sys_write=4;
+	ebx=std_out=1;
+	ecx=fr_red;
+	edx=len_fr_red;
+}
+
+void green_color()
+{
+	eax=sys_write;
+	ebx=std_out;
+	ecx=fr_green;
+	edx="len_fr_green"
+	eksekusi();
+}
+
+void eksekusi()
+{
+	esi.push_back(ebp);
+	ebp=one_word
+	ebp=ebp-1;
+	eax=sys_write=4;
+	ebx=std_out=1
+	edx=-1
+}
+
+void get_1_word_backward()
+{
+	edx=edx+1
+	if(ebp==0) first_sentences();
+}
+
+void first_sentences()
+{
+	ecx=file_str
+	ecx=ecx+ebp
+	esi.pop_back(ebp);
+
+	eax=sys_write=4
+	ebx=std_out=1;
+	ecx=fr_default;
+	edx=len_fr_default;
+	ret_edit_cursor()
+}
+
+string ret_edit_cursor()
+{return;
+	kembali();
+}
+
+void kembali()
+{
+	eax=sys_write=4;
+	ebx=std_out=1
+	ecx=cursor_type
+	edx=len_cursor_type
+}
+
+void count_wpm()
+{
+	clear_screen();
+	eax=msg_welcome;
+	print();
+	eax=sys_write=4;
+	ebx=std_in=0;
+	ecx=msg_wpm
+	printf(ecx);
+	//edx=len_msg_wpm
+	wpm_measure();
+	convert_int_str();
+	cr_print();
+
+	eax=sys_write=4;
+	ebx=std_in=1;
+	msg_keystores="Keystrokes 		: ";
+	ecx=msg_keystroke;
+	printf(ecx);
+
+	eax=one_word;
+	convert_int_str; //convert and print the result
+	-leftresult();
+	green_result();
+	eax=wpm;
+	convert_int_str(); //convert and print the result
+	default_result();
+	_midresult();
+	cr_print();
+	
+
+	//displaying correct word
+	eax=sys_write=4;
+	ebx=std_in=1;
+	msg_correct_words="Correct words  		:";
+	ecx=msg_correct_words;
+	edx=len_msg_correct_words;
+
+	green_result();
+	eax=correct_words;
+	convert_int_str(); //convert and print the result
+	default_result();
+	cr_print();
+
+	// displaying wrong word
+
+	eax=sys_write=4;
+	ebx=std_in=1;
+	msg_wrong_words="Wrong words 		: ";
+
+	red_result();
+
+	eax=wrong_words;
+	convert_int_str(); // convert and print the result
+	default_result();
+	cr_print();
+	cr_print();
+	exit()
+}
+
+void alarm(){
+	eax=sys_alarm=0x1b;
+	ebx=time;
+}
+void clear_screen()
+{
+	clr_scr=27,'[H', 27, '2J',0;
+	eax=sys_write=4;
+	ebx=std_out=1
+	ecx=clr_scr;
+	printf(ecx);
+	//edx=clr_scr
+}
+
+
+void wpm_measure()
+{
+	edx=0;
+	eax=time;
+	eax=time/dword [basis_wpm];
+	if(edx==0) without_dec();
+	else if(eax==0) just_dec();
+	else{
+	stack<string> edx;
+	edx=0;
+	ebx=eax;
+	eax=wpm;
+	eax=eax/ebx;
+	esi.pop_back(ebx);
+	esi.push_back(eax);
+	eax=ebx;
+	eax=eax * dword [decimal];
+	edx=0;
+	eax= eax/ div dword [basis_wpm];
+	ebx=eax;
+	esi.pop_back(eax);
+	edx.push_back(eax);
+	edx=0;
+	eax=eax/ebx;
+	ebx=eax;
+	esi.pop_back(eax);
+	eax=eax-ebx;
+	}
+}
+
+void print()
+{
+	ebx=eax;
+	eax=sys_open=5;
+	ecx=0; // for read only access
+	edx=0777 // read, write and execute by all
+	mov [fd_in], eax
+
+	//read from the file
+	 eax=sys_read=3;
+	 ebx=fd_in;
+	 ecx=info;
+	 edx=len_info
+
+	 //close the file
+	 eax=sys_close=6;
+	 ebx=[fd_in];
+
+	 // print the info
+	 eax=sys_write=4;
+	 ebx=std_out=1;
+	 ecx=info;
+	 edx=len_info
+
+	 ebx=0;
+	 ecx=len_info;
+	 null_info();
+}
+
+void null_info()
+{
+	byte[info + ebx],0
+	ebx=ebx+1;
+	if(null_info>0) null_info();
+
+	eax=0;
+	ebx=0;
+	ecx=0;
+	edx=0;
+}
+void without_dec()
+{
+	if(eax==0) eax0();
+	else{
+	ebx=eax;
+	eax=wpm;
+	eax=eax/ebx;
+	}
+}
+
+void just_dec()
+{
+	eax=edx;
+	eax=eax*dword [decimal];
+	edx=0;
+	eax=eax/dword [basis_wpm];
+	eax=eax * dword [wpm];
+	edx=0;
+	eax=eax/dword[decimal];
+}
+
+void convert_int_str(){
+	ecx=0;
+	null_eax();
+}
+
+void null_eax()
+{
+	edx=0;
+	eax=eax/dword [decimal];
+	stack<string> edx;
+	ecx=ecx+1;
+	if(eax==0) continue();
+	else null_eax();
+}
+
+void continue()
+{
+	edx=0;
+	continue1();	
+}
+
+void continue_1()
+{
+	stack<string> edx;
+	esi.pop_back(ebx);
+	ebx=ebx & 0xff;
+	ebx=ebx+48
+	dword [temp_str + edx]=ebx;
+	edx=edx+1;
+	if(eax>0) continue_1();
+	else{
+	eax=sys_write=4;
+	ebx=std_out=1;
+	ecx=temp_str;
+	printf(ecx);
+	}
+
+}
+
+void cr_print()
+{
+	eax=4;
+	ebx=1;
+	ecx=cr;
+	printf(cr);
+	//edx=len_cr;
+}
+
+void _leftresult()
+{
+	eax=4;
+	ebx=1;
+	ecx=leftresult;
+	printf(ecx);
+	//edx=len_midresult
+}
+
+void green_result(){
+	eax=4;
+	ebx=1;
+	ecx="fr_green";
+	printf("ecx");
+	//edx=len_fr_green;
+}
+
+void default_result()
+{
+	eax=4;
+	ebx=1;
+	ecx=fr_default;
+	printf("ecx");
+	//edx=len_fr_default
+}
+
+void _midresult()
+{
+	eax=4;
+	ebx=1;
+	ecx=midresult;
+	printf(ecx);
+	//edx="len_fr_default";
+}
+
+void green_result()
+{
+	eax=4;
+	ebx=1;
+	ecx=fr_green;
+	printf(ecx);
+	edx="len_fr_green";
+}
+
+void red_result()
+{
+	eax=4;
+	ebx=1;
+	ecx=fr_ned;
+	printf(ecx);
+	//edx=len_fr_red;
+}
+
+void exit()
+{
+	eax=1;
+	ebx=0;
+}
+
+void random()
+{
+	eax=sys_time=0x0d;
+	ebx=0;
+
+	edx=0;
+	ecx=max_paragraph
+	eax=eax/ecx
+
+	ecx=ecx-1
+	if(edx>ecx) _9();
+	ecx=ecx-1
+	if(edx>ecx) _8();
+	ecx=ecx-1
+	if(edx>ecx) _7();
+	ecx=ecx-1
+	if(edx>ecx) _6();
+	ecx=ecx-1
+	if(edx>ecx) _5();
+	ecx=ecx-1
+	if(edx>ecx) _4();
+	ecx=ecx-1
+	if(edx>ecx) _3();
+	ecx=ecx-1
+	if(edx>ecx) _2();
+	ecx=ecx-1
+	if(edx>ecx) _1();
+}
+
+void _1{
+	esi=p1;
+	next();
+}
+void _2{
+	esi=p1;
+	next();
+}
+void _3{
+	esi=p1;
+	next();
+}
+void _4{
+	esi=p1;
+	next();
+}
+void _5{
+	esi=p1;
+	next();
+}
+void _6{
+	esi=p1;
+	next();
+}
+void _7{
+	esi=p1;
+	next();
+}
+void _8{
+	esi=p1;
+	next();
+}
+void _9{
+	esi=p1;
+	next();
+}
+
+void next()
+{
+	//open the file
+	ebx=esi; // esi contain address of source file
+	eax=sys_open=5;
+	ecx=0; // for read only access
+	edx=0777 // read, write and execute by all
+
+	fd_in=eax;
+
+	//read from the file
+	eax=sys_read;
+	ebx=fd_in;
+	ecx=file_str;
+	edx=max_file_str;
+
+	//close the file
+
+	eax=sys_close;
+	ebx=fd_in;
+
+}
+
+void an_args()
+{
+	esi=dword [ebp+4*ebx]
+	edi=argu;
+	movsd;
+	
+	convert_str_int();
+	start();
+}
+
+procedure main{
+	msg_welcome="welcome.txt";
+	msg_error="error.txt";
+	msg_type="type here:";
+	msg_wpm="Words per minute (WPM)	:";
+	keystrokes="Keystrokes		:";
+	correct_words="Correct words 		:";
+	msg_wrong_words="Wrong words  		:";
+
+	stack<string> esi;
+	esi.push_back esp;
+	if(ebp==no_args) random_60s();
+	else an_args();
+
+
+}
